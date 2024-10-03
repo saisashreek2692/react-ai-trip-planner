@@ -1,14 +1,12 @@
-import { Button } from "./components/ui/button"
-
+import Hero from "./components/custom/Hero";
 
 function App() {
-
   return (
     <>
-    <h1>Welcome to Trip Planner</h1>
-    <Button>Get Started</Button>
+      {/* Hero Section */}
+      <Hero />
     </>
-  )
+  );
 }
 
-export default App
+export default App;
