@@ -20,7 +20,11 @@ export default function CreateTrip() {
   }, [formData]);
 
   const OnGenerate = () => {
-    if (formData?.noOfDays > 5) {
+    if (
+      (formData?.noOfDays > 5 && !formData.location) ||
+      !formData?.budget ||
+      !formData.travel
+    ) {
       return;
     }
     console.log(formData);
@@ -90,10 +94,10 @@ export default function CreateTrip() {
               <div
                 key={index}
                 className={`p-4 border cursor-pointer rounded-lg hover:shadow-lg ${
-                  formData?.tarvel == item.people &&
+                  formData?.travel == item.people &&
                   "shadow-lg text-rose-600 border-rose-600"
                 }`}
-                onClick={() => handleInputFormData("tarvel", item.people)}
+                onClick={() => handleInputFormData("travel", item.people)}
               >
                 <h2 className="text-4xl">{item.icon}</h2>
                 <h2 className="font-bold text-lg">{item.title}</h2>
