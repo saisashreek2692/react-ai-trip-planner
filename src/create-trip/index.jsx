@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner"
 import { SelectBudgetOptions, SelectTravelList } from "@/constants/options";
 import { useEffect, useState } from "react";
 import GooglePlacesAutocomplete from "react-google-places-autocomplete";
@@ -25,6 +26,7 @@ export default function CreateTrip() {
       !formData?.budget ||
       !formData.travel
     ) {
+      toast("Please Fill All Details.")
       return;
     }
     console.log(formData);
