@@ -62,7 +62,7 @@ export default function CreateTrip() {
       <div className="mt-20 flex flex-col gap-10">
         <div>
           <h2 className="text-xl my-3 font-medium">
-            Enter your detination or planning your trip.
+            Enter your destination or planning your trip.
           </h2>
           <GooglePlacesAutocomplete
             apiKey={import.meta.env.VITE_GOOGLE_PLACE_API_KEY}
