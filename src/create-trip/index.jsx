@@ -9,10 +9,24 @@ import {
 import { useEffect, useState } from "react";
 import GooglePlacesAutocomplete from "react-google-places-autocomplete";
 import { chatSession } from "@/service/AIModal";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+} from "@/components/ui/dialog";
+
+import { FcGoogle } from "react-icons/fc";
+import { useGoogleLogin } from "@react-oauth/google";
+import axios from "axios";
+
 export default function CreateTrip() {
   const [place, setPlace] = useState();
 
   const [formData, setFormData] = useState([]);
+
+  const [openDailog, setOpenDailog] = useState(false);
 
   const handleInputFormData = (name, value) => {
     setFormData({
@@ -25,7 +39,19 @@ export default function CreateTrip() {
     console.log(formData);
   }, [formData]);
 
+  const login = useGoogleLogin({
+    onSuccess: (codeResp) => GetUserProfile(codeResp),
+    onError: (error) => console.log(error)
+  });
+
   const OnGenerate = async () => {
+    const user = localStorage.getItem("user");
+
+    if (!user) {
+      setOpenDailog(true);
+      return;
+    }
+
     if (
       (formData?.noOfDays > 5 && !formData.location) ||
       !formData?.budget ||
@@ -48,6 +74,20 @@ export default function CreateTrip() {
     const result = await chatSession.sendMessage(FINAL_PROMPT);
     console.log(result?.response?.text());
   };
+
+  const GetUserProfile = (tokenInfo) => {
+    axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${tokenInfo?.access_token}`, {
+      headers: {
+        Authorization: `Bearer ${tokenInfo?.access_token}`,
+        Accept: 'Application/json'
+      }
+    }).then((resp) => {
+      console.log(resp);
+      localStorage.setItem('user', JSON.stringify(resp.data));
+      setOpenDailog(false);
+      OnGenerate();
+    })
+  }
 
   return (
     <div className="sm:px-10 md:px-32 lg:px-56 xl:px-72 px-5 mt-10">
@@ -129,6 +169,19 @@ export default function CreateTrip() {
       <div className="my-10 flex justify-end">
         <Button onClick={OnGenerate}>Generate Trip</Button>
       </div>
+
+      <Dialog open={openDailog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogDescription>
+              <img src="/logo.svg" />
+              <h2 className="font-bold text-lg mt-7">Sign In with Google</h2>
+              <p>Sign In to the App with Google Authentication</p>
+              <Button onClick={login} className="w-full mt-5 flex gap-4 items-center"><FcGoogle className="h-7 w-7" /> Sign In With Google</Button>
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
